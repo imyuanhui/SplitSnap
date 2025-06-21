@@ -155,12 +155,8 @@ if (plusBtn) {
   // Continue button logic
   const continueBtn = document.getElementById('continue-btn');
   if (continueBtn) {
-    continueBtn.onclick = async function() {
+    continueBtn.onclick = function() {
       // Validate
-      if (!selectedFile) {
-        alert('Please upload a receipt image.');
-        return;
-      }
       if (payerTags.length === 0) {
         alert('Please enter at least one payer.');
         return;
@@ -169,16 +165,24 @@ if (plusBtn) {
         alert('Please enter at least one participant.');
         return;
       }
-      // Simulate OCR: for demo, just store dummy items
-      // In real app, send file to backend and get items
-      const dummyItems = [
-        { name: 'Milk', price: 3.5 },
-        { name: 'Bread', price: 2.0 },
-        { name: 'Eggs', price: 4.2 }
-      ];
-      localStorage.setItem('ocr_items', JSON.stringify(dummyItems));
-      localStorage.setItem('usernames', JSON.stringify(participantTags));
-      showSection('split-section');
+      // 构造表单数据
+      const formData = new FormData();
+      formData.append('payer', payerTags[0]); // 只取第一个payer
+      participantTags.forEach(s => formData.append('spliters', s));
+      // 如果你想上传图片，可以加上
+      // if (selectedFile) formData.append('file', selectedFile);
+    
+      // 发送POST请求到后端
+      fetch('/process_upload', {
+        method: 'POST',
+        body: formData,
+      }).then(res => {
+        if (res.redirected) {
+          window.location.href = res.url; // 跳转到后端返回的页面
+        } else {
+          res.text().then(alert);
+        }
+      });
     };
   }
 })();
