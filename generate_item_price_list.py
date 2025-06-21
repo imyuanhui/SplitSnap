@@ -4,8 +4,8 @@ import read_image_with_gemini
 def generate_item_price():
     # Original data
     data = read_image_with_gemini.extract_text()
-    print(type(data))
-    print("RAW DATA:", repr(data))
+    # print(type(data))
+    # print("RAW DATA:", repr(data))
     data = json.loads(data)
     # print(data)
 
