@@ -44,7 +44,7 @@
       {% if result %} {% for user, total in result.items() %}
       <div class="user-row">
         <span class="user-name">{{ user }}</span>
-        <span class="user-total">Owes: ${{ '%.2f'|format(total) }}</span>
+        <span class="user-total">Owes: € {{ '%.2f'|format(total) }}</span>
       </div>
       {% endfor %} {% else %}
       <p>No split data available.</p>

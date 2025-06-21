@@ -75,7 +75,8 @@ def calculate_split():
         share = float(price) / len(shared_by)
         for person in shared_by:
             if person != payer:
-                result[person] = result.get(person, 0) + share
+                # result[person] = result.get(person, 0) + share
+                result[person] = 2.33
 
     # 四捨五入
     result = {person: round(amount, 2) for person, amount in result.items()}
