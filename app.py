@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import pytesseract
 from PIL import Image
 import re
+import compute_balances, generate_item_price_list
 
 # 建立 Flask app / Create Flask app
 app = Flask(__name__)
@@ -19,30 +20,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# OCR 後解析收據文字 / Parse item name and price from OCR text
-def parse_items_from_text(text):
-    items = []
-    for line in text.splitlines():
-        match = re.search(r'(?P<name>[A-Za-z\s]+)\s+(?P<price>\d+\.\d{2})', line)
-        if match:
-            name = match.group('name').strip()
-            price = float(match.group('price'))
-            if name.upper() not in ['TOTAL', 'TAX', 'SUBTOTAL']:
-                items.append({'name': name, 'price': price})
-    return items
-
-# 計算每人應付給付款人的金額 / Compute how much each person owes the payer
-def compute_balances(payer, items):
-    balances = {}
-    for item in items:
-        price = float(item['price'])
-        shared_by = item['shared_by']
-        share = price / len(shared_by)
-        for person in shared_by:
-            if person != payer:
-                balances[person] = balances.get(person, 0) + share
-    return {k: round(v, 2) for k, v in balances.items()}
-
 # 首頁：上傳收據 + 輸入資料 / Upload receipt and fill payer info
 @app.route('/', methods=['GET'])
 def index():
@@ -52,40 +29,34 @@ def index():
 @app.route('/process_upload', methods=['POST'])
 def process_upload():
     payer = request.form.get('payer')
-    spliters = request.form.getlist('spliters')
+    raw_spliters = request.form.get('spliters')  # 這是字串，例如 'Alice,Bob'
+    spliters = [s.strip() for s in raw_spliters.split(',')]  # 分割成 list
 
-    # file = request.files.get('file')
-    # if not file or not allowed_file(file.filename):
-    #     return 'Invalid file', 400
 
-    # filename = secure_filename(file.filename)
-    # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    # file.save(filepath)
+    # dummy_items = {
+    #     "White Floury Bap": 0.49,
+    #     "Kids Toilet Tissue": 0.89,
+    #     "Cherries": 2.68,
+    #     "Pain Au Chocolat": 1.99,
+    #     "Brioche Pasquier": 1.99,
+    #     "Medium Egg Noodles": 0.85,
+    #     "3x Mixed Bean & Corn": 0.79,
+    #     "Lactose Free Milk": 1.59,
+    #     "MSC Seafood Sticks": 1.99,
+    #     "LF Cheezy Singles": 1.59,
+    #     "Clementine 2kg 1000g": 3.49,
+    #     "Tuna in brine": 1.98
+    # }
 
-    # # OCR 辨識文字 / OCR with Tesseract
-    # text = pytesseract.image_to_string(Image.open(filepath))
-    # items = parse_items_from_text(text)
-    dummy_items = {
-        "White Floury Bap": 0.49,
-        "Kids Toilet Tissue": 0.89,
-        "Cherries": 2.68,
-        "Pain Au Chocolat": 1.99,
-        "Brioche Pasquier": 1.99,
-        "Medium Egg Noodles": 0.85,
-        "3x Mixed Bean & Corn": 0.79,
-        "Lactose Free Milk": 1.59,
-        "MSC Seafood Sticks": 1.99,
-        "LF Cheezy Singles": 1.59,
-        "Clementine 2kg 1000g": 3.49,
-        "Tuna in brine": 1.98
-    }
-
-    items = [{'name': k, 'price': v} for k, v in dummy_items.items()]
+    # items = [{'name': k, 'price': v} for k, v in dummy_items.items()]
 
     # 儲存到 session / Store in session
     session['payer'] = payer
-    session['spliters'] = spliters
-    session['items'] = items
+    session['payer'] = "Ella"
+    session['spliters'] = ["Juster","YuWei"]
+    session['shop'] = generate_item_price_list()['shop']
+    session['total'] = generate_item_price_list()['total']
+
 
     return redirect(url_for('split_items'))
 
@@ -112,33 +83,6 @@ def calculate_split():
     result = compute_balances(payer, final_items)
     return render_template('result.html', result=result, payer=payer)
 
-# 測試用：塞入 dummy 收據資料 / Use dummy data for testing without OCR
-@app.route('/test_dummy')
-def test_dummy():
-    dummy_data = {
-        "Shop name": "Lidl",
-        "Items": {
-            "White Floury Bap": 0.49,
-            "Kids Toilet Tissue": 0.89,
-            "Cherries": 2.68,
-            "Pain Au Chocolat": 1.99,
-            "Brioche Pasquier": 1.99,
-            "Medium Egg Noodles": 0.85,
-            "3x Mixed Bean & Corn": 0.79,
-            "Lactose Free Milk": 1.59,
-            "MSC Seafood Sticks": 1.99,
-            "LF Cheezy Singles": 1.59,
-            "Clementine 2kg 1000g": 3.49,
-            "Tuna in brine": 1.98
-        },
-        "Total": 18.48
-    }
-
-    session['payer'] = 'Alice'
-    session['spliters'] = ['Alice', 'Bob', 'Charlie']
-    session['items'] = [{'name': name, 'price': price} for name, price in dummy_data['Items'].items()]
-
-    return redirect(url_for('split_items'))
 
 # 啟動伺服器 / Run Flask app
 if __name__ == '__main__':
