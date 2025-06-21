@@ -1,0 +1,241 @@
+body {
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.center-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+.plus-btn {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 5rem;
+  border: none;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.15);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.plus-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+.desc {
+  margin-top: 2rem;
+  color: #6b7280;
+  font-size: 1.2rem;
+  text-align: center;
+}
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+  width: 100%;
+}
+h1 {
+  text-align: center;
+  color: #2563eb;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+.section {
+  margin-bottom: 2rem;
+}
+.input, .participant-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+.input:focus, .participant-input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+.btn, .btn-primary {
+  width: 100%;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background 0.2s;
+}
+.btn:hover, .btn-primary:hover {
+  background: #1d4ed8;
+}
+.upload-area {
+  border: 3px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: #fafafa;
+  margin-bottom: 1.5rem;
+}
+.upload-area:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.upload-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  color: #6b7280;
+}
+.upload-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+.upload-subtext {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+.file-input {
+  display: none;
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  border-radius: 16px;
+  padding: 0.25rem 0.75rem;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.remove-tag {
+  background: none;
+  border: none;
+  color: #a21caf;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+.remove-tag:focus {
+  outline: 2px solid #a21caf;
+}
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.loading-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.message.success {
+  background: #059669;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.result-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 1.1rem;
+}
+.result-item:last-child {
+  border-bottom: none;
+}
+.user-name {
+  font-weight: 500;
+  color: #374151;
+}
+.user-total {
+  color: #059669;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+.item-name {
+  flex: 1;
+  font-weight: 500;
+  color: #374151;
+}
+.item-price {
+  color: #059669;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+} 
