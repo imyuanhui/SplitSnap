@@ -3,283 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SplitSnap - File Upload</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-size: 2.5rem;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
-
-        .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .upload-area:hover {
-            border-color: #667eea;
-            background-color: #f8f9ff;
-        }
-
-        .upload-area.dragover {
-            border-color: #667eea;
-            background-color: #f0f4ff;
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            color: #667eea;
-            margin-bottom: 1rem;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .upload-text {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-
-        .file-info {
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .upload-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .upload-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background-color: #f0f0f0;
-            border-radius: 3px;
-            margin-top: 1rem;
-            overflow: hidden;
-            display: none;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .message {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-    </style>
+    <title>SplitSnap - Expense Splitter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>SplitSnap</h1>
-        <p class="subtitle">Upload your files securely</p>
-        
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📁</div>
-            <p class="upload-text">Drag and drop files here or click to browse</p>
-            <input type="file" id="fileInput" class="file-input" accept=".txt,.pdf,.png,.jpg,.jpeg,.gif,.doc,.docx">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span>Split</span><span>Snap</span>
+                </h1>
+                <p>Smart Expense Splitting</p>
+            </div>
         </div>
+    </header>
 
-        <div class="file-info" id="fileInfo"></div>
-        
-        <button class="upload-btn" id="uploadBtn" disabled>Upload File</button>
-        
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-fill" id="progressFill"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Initial Interface: New Split Button -->
+            <section id="initial-section" class="section" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
+                <button id="new-split-btn" class="btn-primary" style="max-width: 320px; font-size: 1.5rem; display: flex; align-items: center; gap: 0.75rem; padding: 1.25rem 2.5rem;">
+                    <span style="font-size: 2rem; line-height: 1;">&#43;</span>
+                    <span>New Split</span>
+                </button>
+                <p style="margin-top: 1.5rem; color: #6b7280; font-size: 1.1rem;">Start a new expense split</p>
+            </section>
+
+            <!-- Section 1: Receipt Upload -->
+            <section id="upload-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">Upload Receipt</h2>
+                </div>
+                <div class="section-content">
+                    <div class="upload-area" onclick="document.getElementById('receipt-upload').click()">
+                        <svg class="upload-icon" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="upload-text">Upload Receipt Photo</div>
+                        <div class="upload-subtext">Click to select or drag and drop</div>
+                        <div class="upload-subtext">PNG, JPG, JPEG, GIF, BMP, TIFF up to 16MB</div>
+                    </div>
+                    
+                    <input id="receipt-upload" type="file" accept="image/*" class="file-input" onchange="handleFileUpload(event)">
+                    
+                    <div id="progress-container" class="progress-container">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div id="progress-text" class="progress-text">Processing receipt...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Items Selection -->
+            <section id="items-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">Receipt Items</h2>
+                </div>
+                <div class="section-content">
+                    <div class="items-controls">
+                        <span class="items-label">Select items to split:</span>
+                        <div class="items-buttons">
+                            <button onclick="selectAllItems()" class="btn-secondary">Select All</button>
+                            <button onclick="deselectAllItems()" class="btn-secondary">Deselect All</button>
+                        </div>
+                    </div>
+                    
+                    <div id="items-list" class="items-list">
+                        <!-- Items will be populated here -->
+                    </div>
+                    
+                    <div class="total-section">
+                        <span class="total-label">Total Selected:</span>
+                        <span id="total-selected" class="total-amount">$0.00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Participants -->
+            <section id="participants-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">Split Details</h2>
+                </div>
+                <div class="section-content">
+                    <div class="participants-grid">
+                        <!-- Payer Selection -->
+                        <div class="participant-group">
+                            <label class="participant-label">Who paid?</label>
+                            <input type="text" id="payer-input" placeholder="Enter payer name" class="participant-input">
+                        </div>
+                        
+                        <!-- Participants -->
+                        <div class="participant-group">
+                            <label class="participant-label">Who's splitting?</label>
+                            <div id="participants-container" class="participants-list">
+                                <div class="participant-item">
+                                    <input type="text" placeholder="Enter participant name" class="participant-input">
+                                    <button onclick="removeParticipant(this)" class="remove-participant">×</button>
+                                </div>
+                            </div>
+                            <button onclick="addParticipant()" class="add-participant">+ Add Participant</button>
+                        </div>
+                    </div>
+                    
+                    <button onclick="calculateSplit()" class="btn-primary">
+                        Calculate Split
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 4: Results -->
+            <section id="results-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">Split Results</h2>
+                </div>
+                <div class="section-content">
+                    <div id="results-content" class="results-grid">
+                        <!-- Results will be populated here -->
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <button onclick="resetApp()" class="btn-secondary-large">
+                            Start Over
+                        </button>
+                    </div>
+                </div>
+            </section>
         </div>
-        
-        <div class="message" id="message"></div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <span>Processing receipt...</span>
+        </div>
     </div>
 
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script>
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
-        const message = document.getElementById('message');
-
-        let selectedFile = null;
-
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFileSelect(files[0]);
+        // Show upload section and hide initial section when New Split is clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            var newSplitBtn = document.getElementById('new-split-btn');
+            if (newSplitBtn) {
+                newSplitBtn.addEventListener('click', function() {
+                    document.getElementById('initial-section').style.display = 'none';
+                    document.getElementById('upload-section').classList.remove('hidden');
+                });
             }
         });
-
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFileSelect(e.target.files[0]);
-            }
-        });
-
-        function handleFileSelect(file) {
-            selectedFile = file;
-            fileInfo.style.display = 'block';
-            fileInfo.innerHTML = `
-                <strong>Selected file:</strong> ${file.name}<br>
-                <strong>Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB
-            `;
-            uploadBtn.disabled = false;
-            hideMessage();
-        }
-
-        uploadBtn.addEventListener('click', uploadFile);
-
-        function uploadFile() {
-            if (!selectedFile) return;
-
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-
-            uploadBtn.disabled = true;
-            progressBar.style.display = 'block';
-            hideMessage();
-
-            const xhr = new XMLHttpRequest();
-
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable) {
-                    const percentComplete = (e.loaded / e.total) * 100;
-                    progressFill.style.width = percentComplete + '%';
-                }
-            });
-
-            xhr.addEventListener('load', () => {
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    showMessage('File uploaded successfully!', 'success');
-                    resetForm();
-                } else {
-                    const response = JSON.parse(xhr.responseText);
-                    showMessage(response.error || 'Upload failed', 'error');
-                }
-                uploadBtn.disabled = false;
-                progressBar.style.display = 'none';
-                progressFill.style.width = '0%';
-            });
-
-            xhr.addEventListener('error', () => {
-                showMessage('Upload failed. Please try again.', 'error');
-                uploadBtn.disabled = false;
-                progressBar.style.display = 'none';
-                progressFill.style.width = '0%';
-            });
-
-            xhr.open('POST', '/upload');
-            xhr.send(formData);
-        }
-
-        function showMessage(text, type) {
-            message.textContent = text;
-            message.className = `message ${type}`;
-            message.style.display = 'block';
-        }
-
-        function hideMessage() {
-            message.style.display = 'none';
-        }
-
-        function resetForm() {
-            selectedFile = null;
-            fileInfo.style.display = 'none';
-            fileInput.value = '';
-            uploadBtn.disabled = true;
-        }
     </script>
 </body>
 </html> 
