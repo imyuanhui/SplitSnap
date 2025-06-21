@@ -13,14 +13,30 @@ model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 # Build the prompt
 prompt = """
-Extract the following information from this receipt image:
-- Shop name
-- A list of purchased items with their names and prices
-- Total amount paid
-- if there is a Lidl Plus offer, list the item name and the amount of discount
+You are given an image of a shopping receipt. Your task is to extract the following information:
 
-Please return the result in JSON format with fields: shop, items (array of name + price), offers (array of name + discount) and total.
+1. Shop name
+2. A list of purchased items, each with its name and price
+3. Total amount paid
+4. Any discounts labeled as "Lidl Plus Offer" — for each, return the associated item name and the discount amount
+
+Return the result in JSON format with the following structure:
+{
+  "shop": "<shop name>",
+  "items": [
+    {"name": "<item name>", "price": "<price>"}
+  ],
+  "offers": [
+    {"name": "<item name>", "discount": "<discount amount>"}
+  ],
+  "total": "<total amount>"
+}
+
+Notes:
+- Exclude headers, footers, and non-item lines unless they clearly relate to purchases or discounts.
+- Prices and discounts should be numeric strings (e.g., "0.99", "-0.25").
 """
+
 
 # Send image + prompt
 response = model.generate_content([prompt, image])
