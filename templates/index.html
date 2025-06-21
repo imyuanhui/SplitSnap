@@ -1,159 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SplitSnap - Expense Splitter</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Receipt Splitter</title>
+  <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1 class="logo">
-                    <span>Split</span><span>Snap</span>
-                </h1>
-                <p>Smart Expense Splitting</p>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Initial Interface: New Split Button -->
-            <section id="initial-section" class="section" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
-                <button id="new-split-btn" class="btn-primary" style="max-width: 320px; font-size: 1.5rem; display: flex; align-items: center; gap: 0.75rem; padding: 1.25rem 2.5rem;">
-                    <span style="font-size: 2rem; line-height: 1;">&#43;</span>
-                    <span>New Split</span>
-                </button>
-                <p style="margin-top: 1.5rem; color: #6b7280; font-size: 1.1rem;">Start a new expense split</p>
-            </section>
-
-            <!-- Section 1: Receipt Upload -->
-            <section id="upload-section" class="section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">Upload Receipt</h2>
-                </div>
-                <div class="section-content">
-                    <div class="upload-area" onclick="document.getElementById('receipt-upload').click()">
-                        <svg class="upload-icon" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <div class="upload-text">Upload Receipt Photo</div>
-                        <div class="upload-subtext">Click to select or drag and drop</div>
-                        <div class="upload-subtext">PNG, JPG, JPEG, GIF, BMP, TIFF up to 16MB</div>
-                    </div>
-                    
-                    <input id="receipt-upload" type="file" accept="image/*" class="file-input" onchange="handleFileUpload(event)">
-                    
-                    <div id="progress-container" class="progress-container">
-                        <div class="progress-bar">
-                            <div id="progress-fill" class="progress-fill"></div>
-                        </div>
-                        <div id="progress-text" class="progress-text">Processing receipt...</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section 2: Items Selection -->
-            <section id="items-section" class="section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">Receipt Items</h2>
-                </div>
-                <div class="section-content">
-                    <div class="items-controls">
-                        <span class="items-label">Select items to split:</span>
-                        <div class="items-buttons">
-                            <button onclick="selectAllItems()" class="btn-secondary">Select All</button>
-                            <button onclick="deselectAllItems()" class="btn-secondary">Deselect All</button>
-                        </div>
-                    </div>
-                    
-                    <div id="items-list" class="items-list">
-                        <!-- Items will be populated here -->
-                    </div>
-                    
-                    <div class="total-section">
-                        <span class="total-label">Total Selected:</span>
-                        <span id="total-selected" class="total-amount">$0.00</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section 3: Participants -->
-            <section id="participants-section" class="section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">Split Details</h2>
-                </div>
-                <div class="section-content">
-                    <div class="participants-grid">
-                        <!-- Payer Selection -->
-                        <div class="participant-group">
-                            <label class="participant-label">Who paid?</label>
-                            <input type="text" id="payer-input" placeholder="Enter payer name" class="participant-input">
-                        </div>
-                        
-                        <!-- Participants -->
-                        <div class="participant-group">
-                            <label class="participant-label">Who's splitting?</label>
-                            <div id="participants-container" class="participants-list">
-                                <div class="participant-item">
-                                    <input type="text" placeholder="Enter participant name" class="participant-input">
-                                    <button onclick="removeParticipant(this)" class="remove-participant">×</button>
-                                </div>
-                            </div>
-                            <button onclick="addParticipant()" class="add-participant">+ Add Participant</button>
-                        </div>
-                    </div>
-                    
-                    <button onclick="calculateSplit()" class="btn-primary">
-                        Calculate Split
-                    </button>
-                </div>
-            </section>
-
-            <!-- Section 4: Results -->
-            <section id="results-section" class="section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">Split Results</h2>
-                </div>
-                <div class="section-content">
-                    <div id="results-content" class="results-grid">
-                        <!-- Results will be populated here -->
-                    </div>
-                    
-                    <div class="border-t pt-4">
-                        <button onclick="resetApp()" class="btn-secondary-large">
-                            Start Over
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <span>Processing receipt...</span>
-        </div>
+  <!-- Home Section -->
+  <section id="home-section">
+    <div class="center-btn">
+      <button class="plus-btn" id="plusBtn" aria-label="Start a new split">+</button>
+      <div class="desc">Start a new expense split</div>
     </div>
+  </section>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <script>
-        // Show upload section and hide initial section when New Split is clicked
-        document.addEventListener('DOMContentLoaded', function() {
-            var newSplitBtn = document.getElementById('new-split-btn');
-            if (newSplitBtn) {
-                newSplitBtn.addEventListener('click', function() {
-                    document.getElementById('initial-section').style.display = 'none';
-                    document.getElementById('upload-section').classList.remove('hidden');
-                });
-            }
-        });
-    </script>
+  <!-- Upload Section -->
+  <section id="upload-section" style="display:none;">
+    <div class="container">
+      <h1>Upload Receipt & Assign People</h1>
+      <div class="upload-area" id="upload-area" tabindex="0">
+        <svg class="upload-icon" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div class="upload-text">Upload Receipt Photo</div>
+        <div class="upload-subtext">Click to select or drag and drop</div>
+        <div class="upload-subtext">JPG, JPEG, PNG, WEBP, GIF, BMP, TIFF up to 16MB</div>
+        <input id="receipt-upload" type="file" accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/bmp,image/tiff" class="file-input">
+      </div>
+      <div id="selected-file-info" class="mb-4" style="display:none; align-items:center; gap:1rem;">
+        <img id="file-preview" src="#" alt="Preview" style="display:none; width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb;">
+        <span id="file-name" style="font-size:1rem; color:#374151;"></span>
+        <button id="remove-file-btn" style="margin-left:1rem; background:none; border:none; color:#ef4444; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="mb-4">
+        <label for="payer-input-tag" class="participant-label">Who Paid?</label>
+        <div id="payer-tags" class="tag-list"></div>
+        <input id="payer-input-tag" type="text" class="participant-input" placeholder="Type a name and press Enter">
+      </div>
+      <div class="mb-4">
+        <label for="participant-input-tag" class="participant-label">Who's Splitting?</label>
+        <div id="participant-tags" class="tag-list"></div>
+        <input id="participant-input-tag" type="text" class="participant-input" placeholder="Type a name and press Enter">
+      </div>
+      <button id="continue-btn" class="btn">Continue</button>
+      <div id="upload-loading" class="loading-overlay" style="display:none; position:relative; background:none; box-shadow:none;">
+        <div class="loading-content" style="box-shadow:none; background:none; padding:0;">
+          <div class="spinner"></div>
+          <span style="color:#2563eb; font-weight:500;">Scanning receipt...</span>
+        </div>
+      </div>
+      <div id="upload-success" class="message success" style="display:none; margin-top:1rem;">Upload Successful!</div>
+    </div>
+  </section>
+
+  <!-- Split Section -->
+  <section id="split-section" style="display:none;">
+    <div class="container">
+      <h1>Assign Items to Users</h1>
+      <div class="section">
+        <label for="usernames">Enter all usernames (comma-separated):</label>
+        <input type="text" id="usernames" class="input" placeholder="e.g. alice, bob, charlie">
+      </div>
+      <form id="items-form">
+        <div id="items-list"></div>
+        <button type="submit" class="btn">Next Step</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Result Section -->
+  <section id="result-section" style="display:none;">
+    <div class="container">
+      <h1>Split Result</h1>
+      <ul class="result-list" id="result-list"></ul>
+    </div>
+  </section>
+
+  <script src="static/js/app.js"></script>
 </body>
 </html> 
