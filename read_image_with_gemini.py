@@ -1,14 +1,24 @@
 from PIL import Image
 import google.generativeai as genai
 import json
+from dotenv import load_dotenv
+import os
 
 def extract_text(image_path = "digital_receipt.jpeg"):
+
+    # Load environment variables from .env
+    load_dotenv()
+
+    # Get API key
+    api_key = os.getenv("GOOGLE_API_KEY")
+
+    # print(api_key)
 
     # Load image
     image = Image.open(image_path)
 
     # Authenticate
-    genai.configure(api_key="AIzaSyD0j_PeFIMqwQopBep8xckTflzY5MyBCGo")
+    genai.configure(api_key=api_key)
 
     # Create the vision model
     model = genai.GenerativeModel("models/gemini-1.5-flash")

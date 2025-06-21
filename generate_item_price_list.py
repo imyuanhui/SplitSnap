@@ -31,4 +31,5 @@ def generate_item_price():
     }
 
     # Export result
+    # print(json.dumps(result, indent=2))
     return json.dumps(result, indent=2)
