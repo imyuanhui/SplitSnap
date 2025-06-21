@@ -5,6 +5,7 @@ import pytesseract
 from PIL import Image
 import re
 import compute_balances, generate_item_price_list
+import json
 
 # 建立 Flask app / Create Flask app
 app = Flask(__name__)
@@ -33,10 +34,12 @@ def process_upload():
     spliters = [s.strip() for s in raw_spliters.split(',')]
 
     # ✅ 只呼叫一次避免不一致
-    generated = generate_item_price_list()
+    generated = json.loads(generate_item_price_list.generate_item_price())
+    print(generated)
+    print("generated: ", type(generated))
     session['payer'] = payer
     session['spliters'] = spliters
-    session['items'] = [{'name': k, 'price': v} for k, v in generated['items'].items()]
+    session['items'] = [{'name': k, 'price': v} for k, v in generated['item_price'].items()]
     session['shop'] = generated['shop']
     session['total'] = generated['total']
 
@@ -69,7 +72,7 @@ def calculate_split():
         shared_by = item.get('shared_by', [])
         if not shared_by:
             continue  # 沒人分就跳過
-        share = price / len(shared_by)
+        share = float(price) / len(shared_by)
         for person in shared_by:
             if person != payer:
                 result[person] = result.get(person, 0) + share

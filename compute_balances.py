@@ -1,3 +1,7 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
 @app.route('/calculate_split', methods=['POST'])
 def calculate_split():
     payer = session.get('payer')
@@ -16,7 +20,8 @@ def calculate_split():
         shared_by = item.get('shared_by', [])
         if not shared_by:
             continue  # 沒人分就跳過
-        share = price / len(shared_by)
+        share = float(price) / len(shared_by)
+
         for person in shared_by:
             if person != payer:
                 result[person] = result.get(person, 0) + share
