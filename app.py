@@ -29,34 +29,16 @@ def index():
 @app.route('/process_upload', methods=['POST'])
 def process_upload():
     payer = request.form.get('payer')
-    raw_spliters = request.form.get('spliters')  # 這是字串，例如 'Alice,Bob'
-    spliters = [s.strip() for s in raw_spliters.split(',')]  # 分割成 list
+    raw_spliters = request.form.get('spliters')  # 例如 'Alice,Bob'
+    spliters = [s.strip() for s in raw_spliters.split(',')]
 
-
-    # dummy_items = {
-    #     "White Floury Bap": 0.49,
-    #     "Kids Toilet Tissue": 0.89,
-    #     "Cherries": 2.68,
-    #     "Pain Au Chocolat": 1.99,
-    #     "Brioche Pasquier": 1.99,
-    #     "Medium Egg Noodles": 0.85,
-    #     "3x Mixed Bean & Corn": 0.79,
-    #     "Lactose Free Milk": 1.59,
-    #     "MSC Seafood Sticks": 1.99,
-    #     "LF Cheezy Singles": 1.59,
-    #     "Clementine 2kg 1000g": 3.49,
-    #     "Tuna in brine": 1.98
-    # }
-
-    # items = [{'name': k, 'price': v} for k, v in dummy_items.items()]
-
-    # 儲存到 session / Store in session
+    # ✅ 只呼叫一次避免不一致
+    generated = generate_item_price_list()
     session['payer'] = payer
-    session['payer'] = "Ella"
-    session['spliters'] = ["Juster","YuWei"]
-    session['shop'] = generate_item_price_list()['shop']
-    session['total'] = generate_item_price_list()['total']
-
+    session['spliters'] = spliters
+    session['items'] = [{'name': k, 'price': v} for k, v in generated['items'].items()]
+    session['shop'] = generated['shop']
+    session['total'] = generated['total']
 
     return redirect(url_for('split_items'))
 
@@ -77,10 +59,23 @@ def calculate_split():
 
     for i, item in enumerate(items):
         shared_by = request.form.getlist(f'item_{i}')
-        item['shared_by'] = shared_by
+        item['shared_by'] = shared_by or []  # 確保有 key
         final_items.append(item)
 
-    result = compute_balances(payer, final_items)
+    # 防呆計算
+    result = {}
+    for item in final_items:
+        price = item['price']
+        shared_by = item.get('shared_by', [])
+        if not shared_by:
+            continue  # 沒人分就跳過
+        share = price / len(shared_by)
+        for person in shared_by:
+            if person != payer:
+                result[person] = result.get(person, 0) + share
+
+    # 四捨五入
+    result = {person: round(amount, 2) for person, amount in result.items()}
     return render_template('result.html', result=result, payer=payer)
 
 
