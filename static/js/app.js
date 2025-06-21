@@ -111,9 +111,16 @@ if (plusBtn) {
   }
   function addPayerTag(name) {
     name = name.trim();
-    if (name && !payerTags.includes(name)) {
-      payerTags.push(name);
-      renderTags('payer-tags', payerTags, removePayerTag);
+    if (!name) return;
+    if (payerTags.length > 0) {
+      alert('Can only have one payer.');
+      return;
+    }
+    payerTags.push(name);
+    renderTags('payer-tags', payerTags, removePayerTag);
+    if (!participantTags.includes(name)) {
+      participantTags.push(name);
+      renderTags('participant-tags', participantTags, removeParticipantTag);
     }
   }
   function removePayerTag(idx) {

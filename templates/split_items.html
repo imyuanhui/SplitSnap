@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>分账分配</title>
+    <title>SplitSnap</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 2em; }
         h1 { color: #059669; }
@@ -15,21 +15,21 @@
     </style>
 </head>
 <body>
-    <h1>分账分配</h1>
-    <p>付款人: <b>{{ payer }}</b></p>
+    <h1>the Split Bills 💰</h1>
+    <p>Payer: <b>{{ payer }}</b></p>
     <form method="post" action="{{ url_for('calculate_split') }}">
         {% for item in items %}
         <div class="item-block">
             <div class="item-title">{{ item.name }} <span style="color:#888;">(${{ '%.2f'|format(item.price) }})</span></div>
             <div class="spliters-list">
-                <span>参与分摊：</span>
+                <span>Responsible for:</span>
                 {% for s in spliters %}
                     <label><input type="checkbox" name="item_{{ loop.index0 }}" value="{{ s }}"> {{ s }}</label>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
-        <button type="submit">计算分账</button>
+        <button type="submit">Calculate:</button>
     </form>
 </body>
 </html> 
