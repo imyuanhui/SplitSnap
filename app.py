@@ -30,8 +30,8 @@ def index():
 @app.route('/process_upload', methods=['POST'])
 def process_upload():
     payer = request.form.get('payer')
-    raw_spliters = request.form.get('spliters')  # 例如 'Alice,Bob'
-    spliters = [s.strip() for s in raw_spliters.split(',')]
+    raw_spliters_list = request.form.getlist('spliters')  
+    spliters = [s.strip() for s in raw_spliters_list if s.strip()]
 
     # ✅ 只呼叫一次避免不一致
     generated = json.loads(generate_item_price_list.generate_item_price())
@@ -48,6 +48,7 @@ def process_upload():
 # 顯示每個品項與勾選人 / Show each item and allow selecting spliters
 @app.route('/split_items', methods=['GET'])
 def split_items():
+
     payer = session.get('payer')
     spliters = session.get('spliters')
     items = session.get('items')
@@ -75,8 +76,7 @@ def calculate_split():
         share = float(price) / len(shared_by)
         for person in shared_by:
             if person != payer:
-                # result[person] = result.get(person, 0) + share
-                result[person] = 2.33
+                result[person] = result.get(person, 0) + share
 
     # 四捨五入
     result = {person: round(amount, 2) for person, amount in result.items()}
