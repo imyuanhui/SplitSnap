@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Split Result</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        margin: 0;
+        padding: 2em;
+      }
+      h1 {
+        color: #059669;
+      }
+      .result-block {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px #eee;
+        margin-bottom: 1.5em;
+        padding: 1em;
+      }
+      .user-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5em 0;
+        border-bottom: 1px solid #eee;
+      }
+      .user-row:last-child {
+        border-bottom: none;
+      }
+      .user-name {
+        font-weight: bold;
+      }
+      .user-total {
+        color: #059669;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Split Result</h1>
+    <p>Payer: <b>{{ payer }}</b></p>
+    <div class="result-block">
+      {% if result %} {% for user, total in result.items() %}
+      <div class="user-row">
+        <span class="user-name">{{ user }}</span>
+        <span class="user-total">Owes: ${{ '%.2f'|format(total) }}</span>
+      </div>
+      {% endfor %} {% else %}
+      <p>No split data available.</p>
+      {% endif %}
+    </div>
+    <a href="{{ url_for('index') }}" style="color: #059669">Back to Home</a>
+  </body>
+</html>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>分账分配</title>
+    <title>Bill Split Allocation</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -45,8 +45,8 @@
     </style>
   </head>
   <body>
-    <h1>分账分配</h1>
-    <p>付款人: <b>{{ payer }}</b></p>
+    <h1>Bill Split Allocation</h1>
+    <p>Payer: <b>{{ payer }}</b></p>
     <form method="post" action="{{ url_for('calculate_split') }}">
       {% for item in items %}
       <div class="item-block">
@@ -57,7 +57,7 @@
           >
         </div>
         <div class="spliters-list">
-          <span>参与分摊：</span>
+          <span>Who is sharing:</span>
           {% for s in spliters %}
           <label
             ><input
@@ -71,7 +71,7 @@
         </div>
       </div>
       {% endfor %}
-      <button type="submit">计算分账</button>
+      <button type="submit">Calculate Split</button>
     </form>
   </body>
 </html>
