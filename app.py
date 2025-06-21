@@ -54,17 +54,33 @@ def process_upload():
     payer = request.form.get('payer')
     spliters = request.form.getlist('spliters')
 
-    file = request.files.get('file')
-    if not file or not allowed_file(file.filename):
-        return 'Invalid file', 400
+    # file = request.files.get('file')
+    # if not file or not allowed_file(file.filename):
+    #     return 'Invalid file', 400
 
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(filepath)
+    # filename = secure_filename(file.filename)
+    # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    # file.save(filepath)
 
-    # OCR 辨識文字 / OCR with Tesseract
-    text = pytesseract.image_to_string(Image.open(filepath))
-    items = parse_items_from_text(text)
+    # # OCR 辨識文字 / OCR with Tesseract
+    # text = pytesseract.image_to_string(Image.open(filepath))
+    # items = parse_items_from_text(text)
+    dummy_items = {
+        "White Floury Bap": 0.49,
+        "Kids Toilet Tissue": 0.89,
+        "Cherries": 2.68,
+        "Pain Au Chocolat": 1.99,
+        "Brioche Pasquier": 1.99,
+        "Medium Egg Noodles": 0.85,
+        "3x Mixed Bean & Corn": 0.79,
+        "Lactose Free Milk": 1.59,
+        "MSC Seafood Sticks": 1.99,
+        "LF Cheezy Singles": 1.59,
+        "Clementine 2kg 1000g": 3.49,
+        "Tuna in brine": 1.98
+    }
+
+    items = [{'name': k, 'price': v} for k, v in dummy_items.items()]
 
     # 儲存到 session / Store in session
     session['payer'] = payer
